@@ -16,6 +16,7 @@ if (process.env.NODE_ENV === "production") {
 
 mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost/nytreact");
 
+// get all articles from mongo
 app.get("/api/articles", (req, res) => {
     db.Article
         .find(req.query)
@@ -23,9 +24,18 @@ app.get("/api/articles", (req, res) => {
         .catch(err => res.status(422).json(err))
 })
 
+// create a new article in mongo
 app.post("/api/articles", (req, res) => {
     db.Article
         .create(req.body)
+        .then(dbModel => res.json(dbModel))
+        .catch(err => res.status(422).json(err))
+})
+
+// delete a saved article from mongo
+app.delete("/api/articles/:id", (req, res) => {
+    db.Article
+        .findById({ _id: req.params.id })
         .then(dbModel => res.json(dbModel))
         .catch(err => res.status(422).json(err))
 })
